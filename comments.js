@@ -1,80 +1,26 @@
 //create web server
 var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
-var mongoose = require('mongoose');
-var Comment = require('../models/comment');
+var app = express();
+var path = require("path");
 
-//GET route
-router.get('/', function(req, res) {
-    Comment.find(function(err, comments) {
-        if (err) {
-            console.log(err);
-            res.send(500);
-        } else {
-            res.json(comments);
-        }
-    });
+//add static files location
+app.use(express.static(__dirname + '/public'));
+
+//add route to get index.html
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-//POST route
-router.post('/', jsonParser);
-router.post('/', function(req, res) {
-    console.log(req.body);
-    if (req.body == null) {
-        console.log("No body sent");
-        res.send(400);
-    } else {
-        var comment = new Comment({
-            name: req.body.name,
-            comment: req.body.comment,
-            timestamp: Date.now()
-        });
-        comment.save(function(err, comment) {
-            if (err) {
-                console.log(err);
-                res.send(500);
-            } else {
-                res.json(comment);
-            }
-        });
-    }
+//add route to get index.html
+app.get('/comments', function(req, res) {
+    res.sendFile(path.join(__dirname + '/comments.html'));
 });
 
-//PUT route
-router.put('/:id', jsonParser);
-router.put('/:id', function(req, res) {
-    console.log(req.body);
-    if (req.body == null) {
-        console.log("No body sent");
-        res.send(400);
-    } else {
-        Comment.findByIdAndUpdate(req.params.id, {
-            name: req.body.name,
-            comment: req.body.comment,
-            timestamp: Date.now()
-        }, function(err, comment) {
-            if (err) {
-                console.log(err);
-                res.send(500);
-            } else {
-                res.json(comment);
-            }
-        });
-    }
+//add route to get index.html
+app.get('/comments2', function(req, res) {
+    res.sendFile(path.join(__dirname + '/comments2.html'));
 });
 
-//DELETE route
-router.delete('/:id', function(req, res) {
-    Comment.findByIdAndRemove(req.params.id, function(err) {
-        if (err) {
-            console.log(err);
-            res.send(500);
-        } else {
-            res.send(200);
-        }
-    });
-});
-
-module.exports = router;
+//start web server on port 8080
+app.listen(8080);
+console.log("Webserver is listening on port 8080");
